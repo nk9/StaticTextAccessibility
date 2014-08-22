@@ -330,7 +330,10 @@
 							   }];
 		
 //		NSLog(@"out string: %@", outAttString);
-		return outAttString;
+		// returning NSAttributedString instead of NSMutableAttributedString is required
+		// for the links (and perpahs other stuff) to work (mostly).
+		// See: http://lists.apple.com/archives/accessibility-dev/2014/Aug/msg00021.html
+		return [[NSAttributedString alloc] initWithAttributedString:outAttString];
 	}
 //	else if ([attribute isEqualToString:NSAccessibilityRTFForRangeParameterizedAttribute])
 //	{
