@@ -297,7 +297,7 @@
 	{
 //		NSLog(@"att string for range: %@", parameter);
 		NSMutableAttributedString *outAttString = [super accessibilityAttributeValue:attribute forParameter:parameter];
-		NSMutableAttributedString *selfAttString = [[NSMutableAttributedString alloc] initWithAttributedString:[self attributedStringValue]];
+		NSAttributedString *selfAttString = [self attributedStringValue];
 		
 		[selfAttString enumerateAttribute:NSLinkAttributeName
 								  inRange:[parameter rangeValue]
@@ -331,7 +331,7 @@
 		
 //		NSLog(@"out string: %@", outAttString);
 		// returning NSAttributedString instead of NSMutableAttributedString is required
-		// for the links (and perpahs other stuff) to work (mostly).
+		// for the links (and perhaps other stuff) to work (mostly).
 		// See: http://lists.apple.com/archives/accessibility-dev/2014/Aug/msg00021.html
 		return [[NSAttributedString alloc] initWithAttributedString:outAttString];
 	}
