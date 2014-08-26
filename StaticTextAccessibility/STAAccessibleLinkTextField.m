@@ -9,9 +9,6 @@
 
 @property (copy) NSString *title;
 @property (copy) NSURL *url;
-@property (retain) id parent;
-@property (retain) id window;
-@property (retain) id topLevelUIElement;
 
 @end
 
@@ -39,9 +36,6 @@
 							   NSAccessibilityRoleDescriptionAttribute,
 							   NSAccessibilityTitleAttribute,
 							   NSAccessibilityURLAttribute,
-							   NSAccessibilityParentAttribute,
-							   NSAccessibilityWindowAttribute,
-							   NSAccessibilityTopLevelUIElementAttribute,
 							   ];
 	
 	return newAttributes;
@@ -68,18 +62,6 @@
 	else if ([attribute isEqualToString:NSAccessibilityURLAttribute])
 	{
 		return self.url;
-	}
-	else if ([attribute isEqualToString:NSAccessibilityParentAttribute])
-	{
-		return self.parent;
-	}
-	else if ([attribute isEqualToString:NSAccessibilityWindowAttribute])
-	{
-		return self.window;
-	}
-	else if ([attribute isEqualToString:NSAccessibilityTopLevelUIElementAttribute])
-	{
-		return self.topLevelUIElement;
 	}
 	
 	return nil;
@@ -176,9 +158,6 @@
 													LinkProxyObject *proxy = [[LinkProxyObject alloc] init];
 													proxy.url = value;
 													proxy.title = [self.stringValue substringWithRange:range];
-													proxy.window = [super accessibilityAttributeValue:NSAccessibilityWindowAttribute];
-													proxy.topLevelUIElement = [super accessibilityAttributeValue:NSAccessibilityTopLevelUIElementAttribute];
-													proxy.parent = self;
 													
 													[proxies setObject:proxy forKey:[NSValue valueWithRange:range]];
 												}
