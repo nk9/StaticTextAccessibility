@@ -9,8 +9,6 @@
 
 @property (copy) NSString *title;
 @property (copy) NSURL *url;
-@property (copy) NSValue *size;
-@property (copy) NSValue *position;
 @property (retain) id parent;
 @property (retain) id window;
 @property (retain) id topLevelUIElement;
@@ -41,11 +39,10 @@
 							   NSAccessibilityRoleDescriptionAttribute,
 							   NSAccessibilityTitleAttribute,
 							   NSAccessibilityURLAttribute,
-							   NSAccessibilitySizeAttribute,
 							   NSAccessibilityParentAttribute,
 							   NSAccessibilityWindowAttribute,
 							   NSAccessibilityTopLevelUIElementAttribute,
-							   NSAccessibilityPositionAttribute];
+							   ];
 	
 	return newAttributes;
 }
@@ -83,14 +80,6 @@
 	else if ([attribute isEqualToString:NSAccessibilityTopLevelUIElementAttribute])
 	{
 		return self.topLevelUIElement;
-	}
-	else if ([attribute isEqualToString:NSAccessibilitySizeAttribute])
-	{
-		return self.size;
-	}
-	else if ([attribute isEqualToString:NSAccessibilityPositionAttribute])
-	{
-		return self.position;
 	}
 	
 	return nil;
@@ -131,64 +120,13 @@
 
 #pragma mark -
 
-@interface STAAccessibleLinkTextField ()
-
-@property (nonatomic, retain) NSTextStorage *textStorage;
-
-@end
-
-
 @implementation STAAccessibleLinkTextField
-
-@dynamic textStorage;
 
 + (Class)cellClass
 {
     return [STAAccessibleLinkTextFieldCell class];
 }
 
-
-#pragma mark Layout
-
-- (NSArray *)rectsForCharacterRange:(NSRange)characterRange
-{
-    NSMutableArray *rects = [NSMutableArray array];
-    NSRect titleRect = [self.cell drawingRectForBounds:self.bounds];
-    NSUInteger rectCount = 0;
-	
-	// Refresh the content and size in case either has changed
-	[self.textStorage setAttributedString:self.attributedStringValue];
-	[textContainer setContainerSize:[self.cell drawingRectForBounds:self.bounds].size];
-
-	NSRange glyphRange = [layoutManager glyphRangeForCharacterRange:characterRange actualCharacterRange:nil];
-    NSRectArray rectArray = [layoutManager rectArrayForGlyphRange:glyphRange
-                                         withinSelectedGlyphRange:NSMakeRange(NSNotFound, 0)
-                                                  inTextContainer:textContainer
-                                                        rectCount:&rectCount];
-    for (NSUInteger i = 0; i < rectCount; i++)
-    {
-        NSRect rect = NSOffsetRect(rectArray[i], NSMinX(titleRect), NSMinY(titleRect));
-        [rects addObject:[NSValue valueWithRect:rect]];
-    }
-    
-    return [rects count] ? [rects copy] : nil;
-}
-
-- (NSTextStorage *)textStorage
-{
-    if (!textStorage)
-    {
-        textContainer = [[NSTextContainer alloc] init];
-        layoutManager = [[NSLayoutManager alloc] init];
-		textStorage   = [[NSTextStorage alloc] init];
-		
-        [textContainer setLineFragmentPadding:2.0]; // Without this the glyph rects are misplaced
-		[layoutManager addTextContainer:textContainer];
-        [textStorage   addLayoutManager:layoutManager];
-    }
-	
-	return textStorage;
-}
 
 @end
 
@@ -241,20 +179,6 @@
 													proxy.window = [super accessibilityAttributeValue:NSAccessibilityWindowAttribute];
 													proxy.topLevelUIElement = [super accessibilityAttributeValue:NSAccessibilityTopLevelUIElementAttribute];
 													proxy.parent = self;
-													
-													NSArray *rectValues = [(STAAccessibleLinkTextField *)[self controlView] rectsForCharacterRange:range];
-													
-													if ([rectValues count]) {
-														NSRect rect = [[rectValues objectAtIndex:0] rectValue];
-														
-														NSRect windowCoord = [self.controlView convertRect:rect toView:nil];
-														NSRect screenCoord = [self.controlView.window convertRectToScreen:windowCoord];
-														proxy.size = [NSValue valueWithSize:screenCoord.size];
-														proxy.position = [NSValue valueWithPoint:screenCoord.origin];
-														
-//														[[NSColor redColor] setStroke];
-//														[NSBezierPath strokeRect:windowCoord];
-													}
 													
 													[proxies setObject:proxy forKey:[NSValue valueWithRange:range]];
 												}
