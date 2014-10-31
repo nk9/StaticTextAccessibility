@@ -11,7 +11,7 @@
 
 @interface STAAccessibleLinkTextFieldCell : NSTextFieldCell
 {
-	NSDictionary *linkProxies;
+	NSDictionary *_linkProxies;
 }
 
 @property (nonatomic) NSDictionary *linkProxies;
